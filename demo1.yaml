@@ -1,0 +1,36 @@
+#In this example, the deploy job has a timeout of 10 hours (36,000 seconds) specified using the timeout key. It uses a Node.js Docker image as an example.
+
+# The test job is configured to run only if the deploy job succeeds. This is achieved by using the when condition << pipeline.parameters.deploy.result == 'success' >>.
+
+# You can customize the deploy and test jobs with your specific deployment and testing steps respectively. Make sure to replace the placeholder comments 
+#(# Add your deployment steps here and # Add your test steps here) with the appropriate commands or actions for your project.
+
+# Remember to adjust the configuration according to your specific requirements and the tools you are using for your deployment and testing processes.
+
+
+
+version: 2.1
+
+jobs:
+  deploy:
+    timeout: 36000
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      # Add your deployment steps here
+
+  test:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      # Add your test steps here
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - deploy
+      - test:
+          when: << pipeline.parameters.deploy.result == 'success' >>
