@@ -1,0 +1,75 @@
+# Deploying to a Kubernetes Cluster
+
+# In this example,
+# the deploy job deploys the application to a Kubernetes cluster. 
+# It sets a timeout of 10 hours and uses a Node.js Docker image. 
+# The necessary kubectl tool is installed, and the deployment is performed using kubectl apply -f deployment.yaml command. 
+# Adjust the deployment steps as per your specific Kubernetes deployment requirements.
+
+version: 2.1
+
+jobs:
+  deploy:
+    timeout: 36000
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      - run:
+          name: Install kubectl
+          command: |
+            curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+            chmod +x kubectl
+            sudo mv kubectl /usr/local/bin/
+      - run:
+          name: Deploy to Kubernetes Cluster
+          command: |
+            kubectl apply -f deployment.yaml
+            # Additional deployment steps
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - deploy
+
+
+
+# Deploying to AWS Elastic Beanstalk
+
+## In this example, the deploy job deploys the application to AWS Elastic Beanstalk. 
+# It sets a timeout of 10 hours and uses a Node.js Docker image.
+# The AWS CLI is installed, and the deployment is performed using the eb deploy command. 
+# Adjust the deployment steps and AWS configuration as per your Elastic Beanstalk deployment requirements.
+
+# These examples should give you a starting point for configuring your CircleCI config.yml file for different deployment scenarios. 
+# Modify the steps and commands according to your specific deployment process, tools, and parameters.
+
+version: 2.1
+
+jobs:
+  deploy:
+    timeout: 36000
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      - run:
+          name: Install AWS CLI
+          command: |
+            curl "https://d1vvhvl2y92vvt.cloudfront.net/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Deploy to AWS Elastic Beanstalk
+          command: |
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+            eb deploy
+            # Additional deployment steps
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - deploy
