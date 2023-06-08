@@ -31,7 +31,7 @@ jobs:
           name: Configuring AWS
           command: |
             ls
-            if [ $CIRCLE_BRANCH = 'master' ]; then
+            if [ $CIRCLE_BRANCH = 'main' ]; then
               aws s3 sync ./app/build s3://${AWS_S3_BUCKET}
             fi
 
